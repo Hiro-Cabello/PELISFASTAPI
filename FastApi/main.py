@@ -5,6 +5,9 @@ from database  import User
 from database import Movie
 from database import UserReview
 
+#Importamos las validaciones
+from schemas import UserBaseModel
+
 # () {}  < >
 
 #Vamos a generar la instancia
@@ -35,7 +38,9 @@ def startup():
         
         print('Connecting .....')
         
-    connection.create_tables([User,Movie,UserReview]) # Si es que las tablas ya existen no pasa nada
+    connection.create_tables([User,Movie,UserReview]) 
+    # Si es que las tablas ya existen no pasa nada
+    #Per sino está vamos a crear la base de datos
         
         
     
@@ -48,10 +53,21 @@ def shutdown():
         print('Closed .....')
         
 
+
+#Vamos a definir la creacion de un usuario
+#usando el metodo post del http
+#Fastapi se apoya de pydanti para validar los valores 
+#de entrada como de salida
+@app.post('/users')
+async def create_user(user : UserBaseModel): # user es el nombre del parametro y UserBaseModel es el tipo de dato esperado
+   #para que la funcion se ejecute debe de recibir un objeto UserBaseModel
+   
+    hash_password = User.create_password(user.password)
     
+    user = User.create(
+        username = user.username,
+        password = hash_password
+    )
     
-
-
-
-
-
+    return user.id
+    

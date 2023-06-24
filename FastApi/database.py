@@ -1,5 +1,7 @@
 from peewee import *
 from datetime import datetime
+
+import hashlib
 # () {}  < >
 database = PostgresqlDatabase(
     'fastapi_project',
@@ -23,6 +25,15 @@ class User(Model):
     class Meta:
         database = database
         table_name = 'users'
+    
+    @classmethod #metodo de clase
+    def create_password(cls,password):#cls de clase y password en texto plano
+        h = hashlib.md5()
+        #password = h.update(password)
+        h.update(password.encode('utf-8'))
+        
+        return h.hexdigest()
+        
         
 
 
@@ -51,4 +62,3 @@ class UserReview(Model):
     class Meta:
         database = database
         tablename = 'user_reviews'
-
