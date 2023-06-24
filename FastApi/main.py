@@ -76,5 +76,9 @@ async def create_user(user : UserBaseModel): # user es el nombre del parametro y
         password = hash_password
     )
     
-    return user.id
+    return {
+        'id':user.id , 
+        'username': user.username
+    }
+
     
