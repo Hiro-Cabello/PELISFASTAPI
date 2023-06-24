@@ -8,6 +8,8 @@ from database import UserReview
 #Importamos las validaciones
 from schemas import UserBaseModel
 
+from fastapi import HTTPException
+
 # () {}  < >
 
 #Vamos a generar la instancia
@@ -61,6 +63,11 @@ def shutdown():
 @app.post('/users')
 async def create_user(user : UserBaseModel): # user es el nombre del parametro y UserBaseModel es el tipo de dato esperado
    #para que la funcion se ejecute debe de recibir un objeto UserBaseModel
+   
+   #Validacion de duplicidad de usuarios
+   #                      Algun registro del username de la db que sea igual al username ingresado
+    if User.select().where(User.username == user.username).exists():
+       return HTTPException(409,'El username ya se encuentra en uso ')
    
     hash_password = User.create_password(user.password)
     
