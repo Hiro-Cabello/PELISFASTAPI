@@ -20,6 +20,9 @@ from schemas import ReviewResponseModel
 from schemas import MovieRequestModel
 from schemas import MovieResponseModel
 
+
+from typing import List #Al usar List podemos especificar el tipo de elemento de la lista 
+
 # () {}  < >
 
 #Vamos a generar la instancia
@@ -122,6 +125,7 @@ async def create_review(user_review : ReviewRequestModel):
 
 
 #crear un endpoint en fastapi
+#Con el metodo post es para enviar datos al servidor
 @app.post('/movies',response_model=MovieResponseModel)#Aqui defino la respuesta
 async def create_movie(movie : MovieRequestModel):
     
@@ -132,7 +136,19 @@ async def create_movie(movie : MovieRequestModel):
     
     return movie
 
+    # () {}  < >
 
 
+#Endpoint para poder obtener del servidor una lista de reseñas
+#Con el metodo get lo que vamos a conseguir es recuperar datos del servidor
+#En este caso la funcion no posee ningun parametro no se le pasa nada como parametro
+ #Aquí estoy definiendo mi respuesta y especificandole que va ser una lista y los elemtos van a ser de tipo ReviewResponseModel
+@app.get('/reviews' , response_model = List[ReviewResponseModel])
+async def get_reviews():
+    
+    #vamos a realizar una peticion a la base de datos
+    reviews = UserReview.select() #Select * from user_rev
+    
+    return [user_review for user_review in reviews]
 
     
