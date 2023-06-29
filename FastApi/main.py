@@ -7,8 +7,18 @@ from database import UserReview
 
 #Importamos las validaciones
 from schemas import UserBaseModel
+from schemas import UserResponseModel
+
 
 from fastapi import HTTPException
+
+
+from schemas import ReviewRequestModel
+from schemas import ReviewResponseModel
+
+
+from schemas import MovieRequestModel
+from schemas import MovieResponseModel
 
 # () {}  < >
 
@@ -60,7 +70,7 @@ def shutdown():
 #usando el metodo post del http
 #Fastapi se apoya de pydanti para validar los valores 
 #de entrada como de salida
-@app.post('/users')
+@app.post('/users' , response_model = UserResponseModel)#Con el response_model nos indica que la respuesta del servidor va ser un objeto tipo UserResponseModel
 async def create_user(user : UserBaseModel): # user es el nombre del parametro y UserBaseModel es el tipo de dato esperado
    #para que la funcion se ejecute debe de recibir un objeto UserBaseModel
    
@@ -76,9 +86,53 @@ async def create_user(user : UserBaseModel): # user es el nombre del parametro y
         password = hash_password
     )
     
-    return {
-        'id':user.id , 
-        'username': user.username
-    }
+    #Con esto nos damos cuenta que los modelos nos permiten validar datos de salida como de entrada
+#    return UserResponseModel(id=user.id , username=user.username)
+#Con esto podremos convertir nuestros modelos de peewee a modelos de pydantic
+    return user
+
+
+
+
+@app.post('/reviews',response_model = ReviewResponseModel)#
+async def create_review(user_review : ReviewRequestModel):
+    #user movie review  score
+    
+    # () {}  < >
+    
+    #Esto es para validar la primera coincidencia
+    if User.select().where(User.id == user_review.user_id).first() is None:
+        raise HTTPException(status_code = 404 , detail = 'User not found')
+    
+    if Movie.select().where(Movie.id == user_review.movie_id ).first() is None:
+        raise HTTPException(status_code = 404 , detail = 'Movie no encontrada')
+    #Izquierdo va los nombres que estan en la tabla
+    #           UserReview es el modelo
+    user_review = UserReview.create(
+        user_id = user_review.user_id ,
+        movie_id = user_review.movie_id,
+        review=user_review.review,
+        score=user_review.score
+    )
+
+    return user_review
+
+
+
+
+
+#crear un endpoint en fastapi
+@app.post('/movies',response_model=MovieResponseModel)#Aqui defino la respuesta
+async def create_movie(movie : MovieRequestModel):
+    
+    movie = Movie.create(
+        title = movie.title,
+        year = movie.year
+    )
+    
+    return movie
+
+
+
 
     

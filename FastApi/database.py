@@ -49,12 +49,13 @@ class Movie(Model):
         database = database
         table_name = 'movies'
 
+
 class UserReview(Model):
     user=ForeignKeyField(User , backref='reviews')
-    movie= ForeignKeyField(Movie , backref='reviews')
+    movie= ForeignKeyField(Movie)
     review = TextField()
     score = IntegerField()
-    created_at = DateTimeField(default=datetime)
+    created_at = DateTimeField(default=datetime.now)
     
     def __str__(self):
         return f' {self.user.username} - {self.movie.title} '
