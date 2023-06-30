@@ -50,9 +50,16 @@ class UserResponseModel(BaseModel):
         getter_dict = PeeweeGetterDict
         
 
+#Vamos a abstraer la validacion
+class ReviewValidator():
+ # () {}  < >
+    @validator('score')
+    def score_validator(cls,score):
+        if score < 0 or score >5 :
+            raise ValueError('El valor ingresado no es digito permitido')
+        return score
 
-
-
+#class ReviewRequestModel(BaseModel , ReviewValidator):#Con esto estamos aprovechando la herencia multiple que se puede en el lenguaje
 class ReviewRequestModel(BaseModel):
     #recordar que lo que se ponga en este lado van a ser necesarios al momento de crear el objeto
     user_id : int
@@ -60,7 +67,6 @@ class ReviewRequestModel(BaseModel):
     review : str
     score : int
     
-    # () {}  < >
     @validator('score')
     def score_validator(cls,score):
         if score < 0 or score >5 :
@@ -95,10 +101,19 @@ class MovieResponseModel(BaseModel):
         orm_mode=True
         getter_dict = PeeweeGetterDict
         
+
     
-    
-class MovieRequestModelId(BaseModel):
-    id:int
+# () {}  < >
+#vamos a definir los valores de entrada
+class ReviewRequestPutModel(BaseModel , ReviewValidator):
+    review :str
+    score:int
+
+    @validator('score')
+    def score_validator(cls,score):
+        if score < 0 or score >5 :
+            raise ValueError('El valor ingresado no es digito permitido')
+        return score
 
 
 

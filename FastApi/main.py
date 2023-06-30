@@ -20,8 +20,7 @@ from schemas import ReviewResponseModel
 from schemas import MovieRequestModel
 from schemas import MovieResponseModel
 
-
-from schemas import MovieRequestModelId
+from schemas import ReviewRequestPutModel
 
 
 from typing import List #Al usar List podemos especificar el tipo de elemento de la lista 
@@ -177,3 +176,24 @@ async def get_reviews(review_id:int):
         raise HTTPException(status_code=404,detail='Review Not found for the displayed movie ID')
     #Ahora que sucederia si para este idmovie tiene mas reseñas
     return reviewsforid
+
+#Vamos a actualizar las reseñas
+    # () {}  < >
+
+@app.put('/reviews/{review_id}' , response_model=ReviewResponseModel)#ahora tambien vamos a indicar el endpoint va retornar un ReviewResponseModel
+async def update_review(review_id:int , review_request : ReviewRequestPutModel ):#Este es el molde como va recibir el parametro
+    
+    user_review = UserReview.select().where(UserReview.id == review_id).first()
+    
+    if user_review is None:
+        raise HTTPException(status_code=404,detail='Review Not found for the displayed movie ID')
+    
+    user_review.review = review_request.review
+    user_review.score  = review_request.score
+    
+    
+    #para persistir los cambios nosotros vamos a hacer
+    user_review.save()
+    
+
+    return user_review
