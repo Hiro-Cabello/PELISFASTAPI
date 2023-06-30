@@ -97,7 +97,8 @@ class MovieResponseModel(BaseModel):
         
     
     
-    
+class MovieRequestModelId(BaseModel):
+    id:int
 
 
 

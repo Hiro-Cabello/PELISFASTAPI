@@ -21,6 +21,9 @@ from schemas import MovieRequestModel
 from schemas import MovieResponseModel
 
 
+from schemas import MovieRequestModelId
+
+
 from typing import List #Al usar List podemos especificar el tipo de elemento de la lista 
 
 # () {}  < >
@@ -145,10 +148,32 @@ async def create_movie(movie : MovieRequestModel):
  #Aquí estoy definiendo mi respuesta y especificandole que va ser una lista y los elemtos van a ser de tipo ReviewResponseModel
 @app.get('/reviews' , response_model = List[ReviewResponseModel])
 async def get_reviews():
-    
     #vamos a realizar una peticion a la base de datos
     reviews = UserReview.select() #Select * from user_rev
     
     return [user_review for user_review in reviews]
+ 
 
+#EndPoint para obtener un reseña ingresando id de la pelicula
+@app.get('/reviews/{movie_id}' , response_model=ReviewResponseModel)#Si en caso no definimos como va ser la salida se puede obtener una estructura rara de salida
+async def get_reviewsformovie(movie_id:int):
+
+    reviewsformovie = UserReview.select().where(UserReview.movie_id == movie_id).first()
     
+    if reviewsformovie is None:
+        raise HTTPException(status_code=404,detail='Review Not found for the displayed movie ID')
+    #Ahora que sucederia si para este idmovie tiene mas reseñas
+    return reviewsformovie
+         
+         
+
+#EndPoint para obtener un reseña ingresando id de la pelicula
+@app.get('/reviewid/{review_id}' , response_model=ReviewResponseModel)#Si en caso no definimos como va ser la salida se puede obtener una estructura rara de salida
+async def get_reviews(review_id:int):
+
+    reviewsforid = UserReview.select().where(UserReview.id == review_id).first()
+    
+    if reviewsforid is None:
+        raise HTTPException(status_code=404,detail='Review Not found for the displayed movie ID')
+    #Ahora que sucederia si para este idmovie tiene mas reseñas
+    return reviewsforid
