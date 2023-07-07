@@ -23,6 +23,7 @@ from schemas import MovieResponseModel
 from schemas import ReviewRequestPutModel
 
 
+
 from typing import List #Al usar List podemos especificar el tipo de elemento de la lista 
 
 # () {}  < >
@@ -200,4 +201,13 @@ async def update_review(review_id:int , review_request : ReviewRequestPutModel )
 
 
 #Ahora vamos a hacer un endpoint para eliminar reseñas
-#@app.delete('reviews')
+@app.delete('/reviews/{review_id}' , response_model=ReviewResponseModel) #va retornar ahora 
+async def delete_review(review_id: int):
+    user_review = UserReview.select().where(UserReview.id == review_id).first()
+    
+    if user_review is None:
+        raise HTTPException(status_code=404,detail='Review Not found Found')
+    
+    user_review.delete_instance()#Con esta forma tan sencilla se elimina el objeto de la base de datos
+    
+    return user_review
