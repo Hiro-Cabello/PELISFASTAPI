@@ -197,3 +197,7 @@ async def update_review(review_id:int , review_request : ReviewRequestPutModel )
     
 
     return user_review
+
+
+#Ahora vamos a hacer un endpoint para eliminar reseñas
+#@app.delete('reviews')
