@@ -196,13 +196,12 @@ async def update_review(review_id:int , review_request : ReviewRequestPutModel )
     #para persistir los cambios nosotros vamos a hacer
     user_review.save()
     
-
     return user_review
 
 
 #Ahora vamos a hacer un endpoint para eliminar reseñas
 @app.delete('/reviews/{review_id}' , response_model=ReviewResponseModel) #va retornar ahora 
-async def delete_review(review_id: int):
+async def delete_review(review_id: int): #datos de entrada
     user_review = UserReview.select().where(UserReview.id == review_id).first()
     
     if user_review is None:
@@ -211,3 +210,5 @@ async def delete_review(review_id: int):
     user_review.delete_instance()#Con esta forma tan sencilla se elimina el objeto de la base de datos
     
     return user_review
+
+
