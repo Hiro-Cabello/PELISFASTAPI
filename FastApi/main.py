@@ -147,11 +147,16 @@ async def create_movie(movie : MovieRequestModel):
 #En este caso la funcion no posee ningun parametro no se le pasa nada como parametro
  #Aquí estoy definiendo mi respuesta y especificandole que va ser una lista y los elemtos van a ser de tipo ReviewResponseModel
 @app.get('/reviews' , response_model = List[ReviewResponseModel])
-async def get_reviews():
+#                       Por defecto nos va mostrar la pagina 1
+#                                    por defecto el lìmite de elementos mostrados es 10
+async def get_reviews(page:int = 1 , limit : int = 3):
     #vamos a realizar una peticion a la base de datos
-    reviews = UserReview.select() #Select * from user_rev
+    reviews = UserReview.select().paginate(page , limit ) #Select * from user_rev
     
     return [user_review for user_review in reviews]
+ 
+ 
+ 
  
 
 #EndPoint para obtener un reseña ingresando id de la pelicula
@@ -212,3 +217,8 @@ async def delete_review(review_id: int): #datos de entrada
     return user_review
 
 
+#QuerySet representa una coleccion o conjunto de registros que provienen de una consulta a la base de datos.
+#QuerySet en lineas gnerales no ejecuta la consulta en la base de datos ,en su lugar va aplazar la ejecucion 
+#de la consulta hasta cuando verdaderamente sea necesario.
+
+#paginacion
