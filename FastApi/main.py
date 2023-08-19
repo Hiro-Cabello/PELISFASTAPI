@@ -58,7 +58,7 @@ def startup():
         
     connection.create_tables([User,Movie,UserReview]) 
     # Si es que las tablas ya existen no pasa nada
-    #Per sino está vamos a crear la base de datos
+    #Per sino estan vamos a crear la base de datos
         
         
     
@@ -74,7 +74,7 @@ def shutdown():
 
 #Vamos a definir la creacion de un usuario
 #usando el metodo post del http
-#Fastapi se apoya de pydanti para validar los valores 
+#Fastapi se apoya de pydantic para validar los valores 
 #de entrada como de salida
 @app.post('/users' , response_model = UserResponseModel)#Con el response_model nos indica que la respuesta del servidor va ser un objeto tipo UserResponseModel
 async def create_user(user : UserBaseModel): # user es el nombre del parametro y UserBaseModel es el tipo de dato esperado
@@ -100,7 +100,7 @@ async def create_user(user : UserBaseModel): # user es el nombre del parametro y
 
 
 
-@app.post('/reviews',response_model = ReviewResponseModel)#
+@app.post('/reviews',response_model = ReviewResponseModel)
 async def create_review(user_review : ReviewRequestModel):
     #user movie review  score
     
@@ -145,7 +145,8 @@ async def create_movie(movie : MovieRequestModel):
 #Endpoint para poder obtener del servidor una lista de reseñas
 #Con el metodo get lo que vamos a conseguir es recuperar datos del servidor
 #En este caso la funcion no posee ningun parametro no se le pasa nada como parametro
- #Aquí estoy definiendo mi respuesta y especificandole que va ser una lista y los elemtos van a ser de tipo ReviewResponseModel
+#Aquí estoy definiendo mi respuesta y especificandole que va ser una lista y los elemtos
+# van a ser de tipo ReviewResponseModel
 @app.get('/reviews' , response_model = List[ReviewResponseModel])
 #                       Por defecto nos va mostrar la pagina 1
 #                                    por defecto el lìmite de elementos mostrados es 10
@@ -154,10 +155,9 @@ async def get_reviews(page:int = 1 , limit : int = 3):
     reviews = UserReview.select().paginate(page , limit ) #Select * from user_rev
     
     return [user_review for user_review in reviews]
- 
- 
- 
- 
+
+
+
 
 #EndPoint para obtener un reseña ingresando id de la pelicula
 @app.get('/reviews/{movie_id}' , response_model=ReviewResponseModel)#Si en caso no definimos como va ser la salida se puede obtener una estructura rara de salida
@@ -168,11 +168,14 @@ async def get_reviewsformovie(movie_id:int):
     if reviewsformovie is None:
         raise HTTPException(status_code=404,detail='Review Not found for the displayed movie ID')
     #Ahora que sucederia si para este idmovie tiene mas reseñas
+    print('xxxxxxxx')
+    print(reviewsformovie)
+    print('xxxxxxxxx')
     return reviewsformovie
-         
-         
 
-#EndPoint para obtener un reseña ingresando id de la pelicula
+
+
+#EndPoint para obtener un reseña ingresando su id
 @app.get('/reviewid/{review_id}' , response_model=ReviewResponseModel)#Si en caso no definimos como va ser la salida se puede obtener una estructura rara de salida
 async def get_reviews(review_id:int):
 
